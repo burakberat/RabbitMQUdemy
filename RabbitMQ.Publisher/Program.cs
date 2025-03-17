@@ -23,6 +23,7 @@ namespace RabbitMQ.Publisher
 
                 Console.WriteLine($"Mesaj gönderilmiştir: {message}");
             });
+            //deneme branch Direct Exchange
 
 
             Console.ReadLine();
