@@ -14,15 +14,11 @@ namespace RabbitMQ.Subscriber
             using var connection = factory.CreateConnection();
             var channel = connection.CreateModel();
 
-            var randomQueueName = channel.QueueDeclare().QueueName;
-
-            channel.QueueDeclare(randomQueueName, true, false, false);
-            channel.QueueBind(randomQueueName, "logs-fanout", "", null);
-
             channel.BasicQos(0, 1, false);
 
             var consumer = new EventingBasicConsumer(channel);
-            channel.BasicConsume(randomQueueName, false, consumer);
+            var queueName = "direct-queue-Critical";
+            channel.BasicConsume(queueName, false, consumer);
 
             Console.WriteLine("Loglar Dinleniyor.");
 
@@ -31,6 +27,7 @@ namespace RabbitMQ.Subscriber
                 var message = Encoding.UTF8.GetString(e.Body.ToArray());
                 Thread.Sleep(1500);
                 Console.WriteLine("Gelen Mesaj:" + message);
+                //File.AppendAllText("logs-critical.txt", message + "\n");
 
                 channel.BasicAck(e.DeliveryTag, false);
             };
