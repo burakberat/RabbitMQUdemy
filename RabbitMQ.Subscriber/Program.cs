@@ -33,6 +33,8 @@ namespace RabbitMQ.Subscriber
             };
 
             Console.ReadLine();
+
+            //deneme TopixExchange
         }
     }
 }
