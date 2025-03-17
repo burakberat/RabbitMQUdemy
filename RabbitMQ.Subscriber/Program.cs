@@ -35,6 +35,7 @@ namespace RabbitMQ.Subscriber
             Console.ReadLine();
 
             //deneme TopixExchange
+            //deneme commit
         }
     }
 }
