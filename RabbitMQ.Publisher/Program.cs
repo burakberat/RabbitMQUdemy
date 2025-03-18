@@ -25,7 +25,7 @@ namespace RabbitMQ.Publisher
 
             Enum.GetNames(typeof(LogNames)).ToList().ForEach(x =>
             {
-                //Deneme
+                //Deneme 123
 
                 var routeKey = $"route-{x}";
                 var queueName = $"direct-queue-{x}";
