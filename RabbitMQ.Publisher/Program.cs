@@ -21,27 +21,21 @@ namespace RabbitMQ.Publisher
             var channel = connection.CreateModel();
 
             //channel.ExchangeDeclare("logs-fanout", durable:true, type:ExchangeType.Fanout);
-            channel.ExchangeDeclare("logs-direct", durable: true, type: ExchangeType.Direct);
+            // channel.ExchangeDeclare("logs-direct", durable: true, type: ExchangeType.Direct);
+            channel.ExchangeDeclare("logs-topic", durable: true, type: ExchangeType.Topic);
 
-            Enum.GetNames(typeof(LogNames)).ToList().ForEach(x =>
-            {
-                //Deneme 123
-
-                var routeKey = $"route-{x}";
-                var queueName = $"direct-queue-{x}";
-                channel.QueueDeclare(queueName, true, false, false);
-                channel.QueueBind(queueName, "logs-direct", routeKey, null);
-
-            });
-
+            Random rnd = new Random();
             Enumerable.Range(1, 50).ToList().ForEach(x =>
             {
-                LogNames log = (LogNames)new Random().Next(1, 5);
-                string message = $"log-type {log}";
-                var messageBody = Encoding.UTF8.GetBytes(message);
-                var routeKey = $"route-{log}";
+                LogNames log1 = (LogNames)rnd.Next(1, 5);
+                LogNames log2 = (LogNames)rnd.Next(1, 5);
+                LogNames log3 = (LogNames)rnd.Next(1, 5);
 
-                channel.BasicPublish("logs-direct", routeKey, null, messageBody);
+                var routeKey = $"{log1}.{log2}.{log3}";
+                string message = $"log-type {log1}-{log2}-{log3}";
+                var messsageBody = Encoding.UTF8.GetBytes(message);
+
+                channel.BasicPublish("logs-topic", routeKey, null, messsageBody);
 
                 Console.WriteLine($"Log gönderilmiştir: {message}");
             });
