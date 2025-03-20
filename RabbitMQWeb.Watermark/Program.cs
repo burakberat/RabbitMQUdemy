@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using RabbitMQ.Client;
 using RabbitMQWeb.Watermark.Models;
+using RabbitMQWeb.Watermark.Services;
+using System.Configuration;
 
 namespace RabbitMQWeb.Watermark
 {
@@ -15,6 +18,13 @@ namespace RabbitMQWeb.Watermark
             {
                 options.UseInMemoryDatabase(databaseName: "productDb");
             });
+
+            builder.Services.AddSingleton(sp => new ConnectionFactory()
+            {
+                Uri = new Uri(builder.Configuration.GetConnectionString("RabbitMQ"))
+            });
+
+            builder.Services.AddSingleton<RabbitMQClientService>();
 
             var app = builder.Build();
 
