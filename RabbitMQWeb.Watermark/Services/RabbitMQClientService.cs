@@ -17,24 +17,22 @@ namespace RabbitMQWeb.Watermark.Services
         {
             _connectionFactory = connectionFactory;
             _logger = logger;
-            Connect();
+
         }
 
         public IModel Connect()
         {
             _connection = _connectionFactory.CreateConnection();
-
             if (_channel is { IsOpen: true })
             {
                 return _channel;
             }
 
             _channel = _connection.CreateModel();
-            _channel.ExchangeDeclare(ExchangeName, ExchangeType.Direct, true, false);
+            _channel.ExchangeDeclare(ExchangeName, type: "direct", true, false);
             _channel.QueueDeclare(QueueName, true, false, false, null);
-            _channel.QueueBind(ExchangeName, QueueName, RoutingWatermark);
-
-            _logger.LogInformation("RabbitMQ ile bağlantı kuruldu.");
+            _channel.QueueBind(exchange: ExchangeName, queue: QueueName, routingKey: RoutingWatermark);
+            _logger.LogInformation("RabbitMQ ile bağlantı kuruldu...");
             return _channel;
         }
 
@@ -42,11 +40,10 @@ namespace RabbitMQWeb.Watermark.Services
         {
             _channel?.Close();
             _channel?.Dispose();
-
             _connection?.Close();
             _connection?.Dispose();
+            _logger.LogInformation("RabbitMQ ile bağlantı koptu...");
 
-            _logger.LogInformation("RaabitMQ ile bağlantı koptu.");
         }
     }
 }
